@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Readme.html</title>
+<meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8"/>
+<link rel="stylesheet" type="text/css" media="all" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"  />
+<link rel="stylesheet" type="text/css" media="all" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.min.css"  /><meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'><style> body { box-sizing: border-box; max-width: 740px; width: 100%; margin: 40px auto; padding: 0 10px; } </style><script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script><script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script><script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>
+</head>
+
+<body>
+
+<h1>CL-DOCX</h1>
+<h1>Introduction</h1>
+<p>CL-DOCX is a simple reader and writer for docx files written in Common Lisp. It currently works on operating on paragraphs but it&#39;s made in Object Oriented style in hope of future extensions. </p>
+<p>The example way of using the library is as such:</p>
+<pre><code class="language-common-lisp">(with-open-docx (doc &quot;./test.docx&quot;)
+  (setf paras (get-all-paragraphs doc))
+    (write-value (first paras) &quot;hi&quot;))
+</code></pre>
+<p>The primary way to engage with this library is the macro <strong>with-open-docx</strong> , The <strong>doc</strong> variable will contain the xml tree node of the document.xml file in the lisp structure format. </p>
+<p>To extract all paragraphs from a document.xml file, the function <strong>get-all-paragraphs</strong> is used. This function returns a list of PARAGRAPH objects. On these objects, you can use the Generic Functions <strong>read-value</strong> to read the value of each paragraph (string) and <strong>write-value</strong> which gets an PARAGRAPH object, a replacement string and modifies it.</p>
+<p>After the end of <strong>with-open-docx</strong> , all changes to the contents are saved to the docx file. </p>
+<p>Here&#39;s another example of reading all paragraph from a docx file: </p>
+<p><code>(mapcar #&#39;read-value (get-all-paragraph doc)&#39;)</code></p>
+<h1>How to Install</h1>
+<p>1: Copy the contents of the file to yout quicklisp&#39;s local-project folder </p>
+<p>2: Use this to load the contents:</p>
+<p><code>(ql:quickload &quot;cl-docx&quot;)</code></p>
+
+
+</body>
+</html>
