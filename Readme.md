@@ -24,7 +24,7 @@ Here's another example of reading all paragraph from a docx file:
 
 # How to Install
 
-1: Copy the contents of the file to yout quicklisp's local-project folder 
+1: Clone the repository to your quicklisp's local-project folder 
 
 2: Use this to load the contents:
 
