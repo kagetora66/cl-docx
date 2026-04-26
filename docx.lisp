@@ -56,7 +56,8 @@
       (write-line output-xml stream)))
   (repack-directory-to-docx doc-path original-doc))
 
-
+;;EXPERIMENTAL MAY CORRUPT
+;;FIXME Probably an error in xml library
 (defmacro with-open-docx ((docvar docpath) &body body)
   "DOCVAR is an xml treenode representing the content of document.xml. Changes are saved to the DOCPATH file at the end of macro"
   (let ((temp-path (gensym)))
@@ -65,6 +66,13 @@
        (unwind-protect
             (progn ,@body)
          (repackage ,temp-path ,docvar ,docpath)))))
+
+(defun get-paragraphs (pathname)
+  "Get all paragraph object from docx PATHNAME"
+  (let ((temp-path (unzip pathname)))
+    (get-all-paragraphs (get-xml-tree temp-path))))
+
+
 #+test
 (time (with-open-docx (doc "./test.docx")
   (setf paras (get-all-paragraphs doc))
