@@ -18,6 +18,14 @@ To extract all paragraphs from a document.xml file, the function **get-all-parag
 
 After the end of **with-open-docx** , all changes to the contents are saved to the docx file. 
 
+As of now, the process of writing to file with with-open-docx is still experimental. For now, use the following example to read paragraphs from files: 
+
+
+``` common-lisp
+(get-paragraphs "./test.docx")
+```
+
+
 Here's another example of reading all paragraph from a docx file: 
 
 `(mapcar #'read-value (get-all-paragraph doc)')`
