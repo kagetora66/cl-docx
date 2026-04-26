@@ -20,12 +20,12 @@
 
 (defun get-all-paragraphs (treenode)
   "Returns a list of PARAGRAPH objects"
-  (wrap-paragraphs (mapcar (lambda (node)
-                             (xmls:xmlrep-find-child-tag :t node))
+  (wrap-paragraphs (remove-if #'null (mapcar (lambda (node)
+                             (xmls:xmlrep-find-child-tag :t node nil))
                            (mapcar (lambda (node)
-                                     (xmls:xmlrep-find-child-tag :r node))
+                                     (xmls:xmlrep-find-child-tag :r node nil))
                                    (xmls:xmlrep-find-child-tags :p
-                                                                (xmls:xmlrep-find-child-tag :body treenode))))))
+                                                                (xmls:xmlrep-find-child-tag :body treenode)))))))
 
 (defmethod read-value ((text paragraph))
   "Read the value of paragraph"
