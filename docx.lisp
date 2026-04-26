@@ -26,10 +26,9 @@
                                      (xmls:xmlrep-find-child-tag :r node nil))
                                    (xmls:xmlrep-find-child-tags :p
                                                                 (xmls:xmlrep-find-child-tag :body treenode)))))))
-
 (defmethod read-value ((text paragraph))
   "Read the value of paragraph"
-  (xmls:xmlrep-string-child (node-reader text)))
+  (xmls:xmlrep-string-child (node-reader text) nil))
 
 (defmethod write-value ((text paragraph) new)
   "Replaces the paragraph with NEW string"
