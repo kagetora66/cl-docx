@@ -3,6 +3,7 @@
 # Introduction
 
 CL-DOCX is a simple reader and writer for docx files written in Common Lisp. It currently works on operating on paragraphs but it's made in Object Oriented style in hope of future extensions. 
+As this library parses the entire xml to memory it is not fit for large documents.
 
 The example way of using the library is as such:
 
