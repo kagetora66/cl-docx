@@ -44,6 +44,10 @@
                        (uiop:temporary-directory) (format nil "temp_~a" (pathname-name pathname)))))))
     #+linux (uiop:run-program
              (list "unzip" "-o" (namestring pathname) "-d" (namestring output-dir)))
+    #+windows (uiop:run-program
+               (list "powershell" "-Command"
+                  (format nil "Expand-Archive -Path '~a' -DestinationPath '~a' -Force"
+                    (namestring pathname) (namestring output-dir))))
     output-dir))
 
 (defun repackage (doc-path treenode original-doc)
