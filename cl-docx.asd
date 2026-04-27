@@ -6,5 +6,5 @@
   :serial t
   :components ((:file "package")
                (:file "docx"))
-  :depends-on (:zip :flexi-streams :xmls))
+  :depends-on (:zip :flexi-streams :cxml))
 
