@@ -42,7 +42,7 @@
                      (uiop:ensure-directory-pathname
                       (merge-pathnames
                        (uiop:temporary-directory) (format nil "temp_~a" (pathname-name pathname)))))))
-    #+linux (uiop:launch-program
+    #+linux (uiop:run-program
              (list "unzip" "-o" (namestring pathname) "-d" (namestring output-dir)))
     output-dir))
 
