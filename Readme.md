@@ -20,7 +20,7 @@ After the end of **with-open-docx** , all changes to the contents are saved to t
 
 Here's another example of reading all paragraph from a docx file: 
 
-`(map 'vector #'read-value (get-all-paragraph doc)')`
+`(map 'vector #'read-value (get-all-paragraph doc))`
 
 # How to Install
 
