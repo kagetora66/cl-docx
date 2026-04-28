@@ -7,7 +7,7 @@ CL-DOCX is a simple reader and writer for docx files written in Common Lisp. It 
 The example way of using the library is as such:
 
 ``` common-lisp
-(with-open-docx (doc "./test.docx")
+(with-open-docx (doc P#"./test.docx" ;;Must be absolute path)
   (setf paras (get-all-paragraphs doc))
     (write-value (aref paras 0) "hi"))
 ```
