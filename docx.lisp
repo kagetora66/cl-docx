@@ -36,9 +36,11 @@
   "Retruns TREENODE object from temporary DOC_PATH"
   (cxml:parse-file (merge-pathnames "word/document.xml" doc-path) (cxml-dom:make-dom-builder)))
 
+;;We're doing this due to a bug in the zip library
 (defun unzip (pathname)
-  "Uses operating system unzio funtions to extract docx file to temporary folder. Retunrs the extracted path"
-  (let ((output-dir (ensure-directories-exist
+  "Uses operating system unzip funtions to extract docx file to temporary folder. Retunrs the extracted path"
+  (let ((pathname (if (pathnamep pathname) pathname (pathname pathname)))
+        (output-dir (ensure-directories-exist
                      (uiop:ensure-directory-pathname
                       (merge-pathnames
                        (uiop:temporary-directory) (format nil "temp_~a" (pathname-name pathname)))))))
@@ -72,6 +74,7 @@
 
 
 #+test
-(time (with-open-docx (doc #P"/home/safari/Documents/lisp/cl-docx/gf.docx")
-  (setf paras (get-all-paragraphs doc))
+(time (with-open-docx (doc "./test.docx")
+        (setf paras (get-all-paragraphs doc))
+        (setf doctree doc)
         (map 'vector #'read-value paras)))
