@@ -8,29 +8,34 @@
   ((node :initarg :node
          :accessor node-reader
          :type dom:element
-         :documentation "Abstraction layer for xml nodes representing paragraphs")))
+         :documentation "Abstraction layer for xml nodes representing paragraphs")
+  (text :initarg :text
+        :accessor text-acc
+        :documentation "TEXT node of paragraph node")))
 
 (declaim (inline wrap-paragraph))
 
-(defun wrap-paragraph (node-instance)
-  (make-instance 'paragraph :node node-instance))
+(defun wrap-paragraph-constructor (node-instance)
+  (make-instance 'paragraph :node node-instance
+                            :text (dom:last-child
+                                   (aref
+                                    (dom:get-elements-by-tag-name node-instance "t") 0))))
 
 (defun wrap-paragraphs (node-vector)
-  (map 'vector #'wrap-paragraph node-vector))
+  (map 'vector #'wrap-paragraph-constructor node-vector))
 
 
 (defun get-all-paragraphs (treenode)
   "Returns a VECTOR of PARAGRAPH objects"
-  (wrap-paragraphs (map 'vector #'dom:last-child (dom:get-elements-by-tag-name treenode "w:t"))))
-
+  (wrap-paragraphs (dom:get-elements-by-tag-name treenode "p")))
 
 (defmethod read-value ((text paragraph))
-  "Read the value of paragraph"
-  (dom:node-value (node-reader text)))
+  "Read the TEXT value of paragraph"
+  (dom:node-value (text-acc text)))
 
 (defmethod write-value ((text paragraph) new)
-  "Replaces the paragraph with NEW string"
-  (setf (dom:node-value (node-reader text)) new))
+  "Replaces the TEXT paragraph with NEW string"
+  (setf (dom:node-value (text-acc text)) new))
 
 (defun get-xml-tree (doc-path)
   "Retruns TREENODE object from temporary DOC_PATH"
@@ -72,9 +77,14 @@
             (progn ,@body)
          (repackage ,temp-path ,docvar ,docpath)))))
 
+(defmethod remove-paragraph ((para paragraph))
+  "Removes PARAGRAPH object from docx tree (experimental)"
+  ;;NOTE we're assuming the immediate parent of w:p is always w:body. Needs more testing
+  (dom:remove-child (dom:parent-node (node-reader para)) (node-reader para)))
 
 #+test
-(time (with-open-docx (doc "./test.docx")
+(time (with-open-docx (doc #P"./test.docx")
         (setf paras (get-all-paragraphs doc))
         (setf doctree doc)
+        (remove-paragraph (aref paras 0))
         (map 'vector #'read-value paras)))
