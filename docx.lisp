@@ -13,11 +13,22 @@
         :accessor text-acc
         :documentation "TEXT node of paragraph node")))
 
+(defclass text ()
+  ((text-value :initarg :text-value
+              :accessor text-get
+              :documentation "Representation of text object ")))
+
 (defun wrap-paragraph-constructor (node-instance)
   (make-instance 'paragraph :node node-instance
                             :text (if (array-in-bounds-p (dom:get-elements-by-tag-name node-instance "w:t") 0)
                                       (aref (dom:get-elements-by-tag-name node-instance "w:t") 0)
                                       nil)))
+
+(defun wrap-text-constructor (node-instance)
+  (make-instance 'text :text-value node-instance))
+
+(defun wrap-texts (node-vector)
+  (map 'vector #'wrap-text-constructor node-vector))
 
 (defun wrap-paragraphs (node-vector)
   (map 'vector #'wrap-paragraph-constructor node-vector))
@@ -27,14 +38,27 @@
   "Returns a VECTOR of PARAGRAPH objects"
   (wrap-paragraphs (dom:get-elements-by-tag-name treenode "w:p")))
 
+(defun get-all-texts (treenode)
+  "Returns a VECTOR of TEXT objects"
+  (wrap-texts (dom:get-elements-by-tag-name treenode "w:t")))
+
 (defmethod read-value ((text paragraph))
-  "Read the TEXT value of paragrqaph"
+  "Read the TEXT value of a PARAGRAPH object"
   (unless (null (text-acc text))
     (dom:node-value (dom:last-child (text-acc text)))))
+
+(defmethod read-value ((text text))
+  "Read the TEXT value of a TEXT object"
+  (unless (null (text-get text))
+    (dom:node-value (dom:last-child (text-get text)))))
 
 (defmethod write-value ((text paragraph) new)
   "Replaces the TEXT paragraph with NEW string"
   (setf (dom:node-value (text-acc text)) new))
+
+(defmethod write-value ((text text) new)
+  "Replaces the TEXT Object with NEW string"
+  (setf (dom:node-value (text-get text)) new))
 
 (defun get-xml-tree (doc-path)
   "Retruns TREENODE object from temporary DOC_PATH"
@@ -81,10 +105,9 @@
   ;;NOTE we're assuming the immediate parent of w:p is always w:body. Needs more testing
   (dom:remove-child (dom:parent-node (node-reader para)) (node-reader para)))
 
-
 #+test
-(time (with-open-docx (doc #P"./test.docx")
-        (setf paras (get-all-paragraphs doc))
+(time (with-open-docx (doc #P"./TEST2.docx")
+        (setf paras (get-all-texts doc))
         (setf doctree doc)
-        (map 'vector #'read-value paras)
-        (remove-paragraph (aref paras 7))))
+        (map 'vector #'read-value paras)))
+        
