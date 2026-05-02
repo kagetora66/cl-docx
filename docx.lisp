@@ -2,8 +2,10 @@
 
 (defun repack-directory-to-docx (source-directory output-docx)
   "Compresses the SOURCE-DIRECTORY into a new DOCX file at OUTPUT-DOCX."
-  (zip:zip output-docx source-directory :if-exists :supersede))
-  
+  (zip:zip output-docx source-directory :if-exists :supersede)
+  ;;validate for the purpose of preventing wildcard tomfoolery
+  (uiop:delete-directory-tree source-directory :validate #'uiop:directory-pathname-p))
+
 (defclass paragraph ()
   ((node :initarg :node
          :accessor node-reader
@@ -106,7 +108,7 @@
   (dom:remove-child (dom:parent-node (node-reader para)) (node-reader para)))
 
 #+test
-(time (with-open-docx (doc #P"./TEST2.docx")
+(time (with-open-docx (doc #P"./test.docx")
         (setf paras (get-all-texts doc))
         (setf doctree doc)
         (map 'vector #'read-value paras)))
