@@ -56,11 +56,11 @@
 
 (defmethod write-value ((text paragraph) new)
   "Replaces the TEXT paragraph with NEW string"
-  (setf (dom:node-value (text-acc text)) new))
+  (setf (dom:node-value (dom:last-child (text-acc text))) new))
 
 (defmethod write-value ((text text) new)
   "Replaces the TEXT Object with NEW string"
-  (setf (dom:node-value (text-get text)) new))
+  (setf (dom:node-value (dom:last-child (text-get text))) new))
 
 (defun get-xml-tree (doc-path)
   "Retruns TREENODE object from temporary DOC_PATH"
@@ -110,6 +110,5 @@
 #+test
 (time (with-open-docx (doc #P"./test.docx")
         (setf paras (get-all-texts doc))
-        (setf doctree doc)
-        (map 'vector #'read-value paras)))
-        
+        (map 'vector #'read-value paras)
+        (write-value (aref paras 0) "g")))
