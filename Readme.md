@@ -8,7 +8,7 @@ The example way of using the library is as such:
 
 ``` common-lisp
 (with-open-docx (doc "./test.docx")
-  (setf paras (get-all-paragraphs doc))
+  (setf paras (get-all-texts doc))
     (write-value (aref paras 0) "hi"))
 ```
 
