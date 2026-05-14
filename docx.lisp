@@ -18,7 +18,17 @@
 (defclass text ()
   ((text-value :initarg :text-value
               :accessor text-get
-              :documentation "Representation of text object ")))
+               :documentation "Representation of text object ")))
+
+(defclass table ()
+  ((row-list :initarg :row-list :accessor row-list)))
+
+(defclass table-row ()
+  ((cell-list :initarg :cell-list :accessor cell-list)))
+
+(defclass cell ()
+  ((cell :initarg :cell :accessor cell)))
+
 
 (defun wrap-paragraph-constructor (node-instance)
   (make-instance 'paragraph :node node-instance
@@ -53,6 +63,21 @@
   "Read the TEXT value of a TEXT object"
   (unless (null (text-get text))
     (dom:node-value (dom:last-child (text-get text)))))
+
+(defmethod read-value ((cl cell))
+  "READS the text value inside a CELL object"
+  (if (array-in-bounds-p (dom:get-elements-by-tag-name (cell cl) "w:t") 0)
+      (dom:node-value (dom:last-child
+                       (aref (dom:get-elements-by-tag-name (cell cl) "w:t") 0)))
+                                      nil))
+
+(defmethod read-value ((row table-row))
+  "Reads and returns a list of cell values for a TABLE-ROW object"
+  (mapcar #'read-value (cell-list row)))
+
+(defmethod read-value ((table table))
+  "Reads and returns a list of rows (each row being a list of cell values) for a TABLE object"
+  (mapcar #'read-value (row-list table)))
 
 (defmethod write-value ((text paragraph) new)
   "Replaces the TEXT paragraph with NEW string"
@@ -102,13 +127,30 @@
             (progn ,@body)
          (repackage ,temp-path ,docvar ,docpath)))))
 
-(defmethod remove-paragraph ((para paragraph))
+(defmethod remove-item ((para paragraph))
   "Removes PARAGRAPH object from docx tree (experimental)"
   ;;NOTE we're assuming the immediate parent of w:p is always w:body. Needs more testing
   (dom:remove-child (dom:parent-node (node-reader para)) (node-reader para)))
 
+(defun wrap-cell-constructor (row-node)
+  "Gets a ROW xml node and generates a list of CELL objects from it"
+  (map 'list (lambda (cl) (make-instance 'cell :cell cl)) (dom:get-elements-by-tag-name row-node "w:tc")))
+
+(defun row-constrcutor (table-node)
+  "Constructs TABLE-ROWS containing CELL objects from TABLE NODE"
+  (map 'list
+            (lambda (row) (make-instance 'table-row :cell-list (wrap-cell-constructor row)))
+            (dom:get-elements-by-tag-name table-node "w:tr")))
+
+(defun get-all-tables (node-instance)
+  "Constuct a list of TABLE objects from document node, NODE-INSTANCE"
+  (map 'list (lambda (table) (make-instance 'table :row-list (row-constrcutor table)))
+       (dom:get-elements-by-tag-name node-instance "w:tbl")))
+
+
 #+test
 (time (with-open-docx (doc #P"./test.docx")
         (setf paras (get-all-texts doc))
+        (setf doctree doc)
         (map 'vector #'read-value paras)
-        (write-value (aref paras 0) "g")))
+        ))

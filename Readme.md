@@ -22,6 +22,32 @@ Here's another example of reading all paragraph from a docx file:
 
 `(map 'vector #'read-value (get-all-texts doc))`
 
+You can also get all the tables from a docx file in the same manner. Tables are organzied in this manner:
+
+    1: A table object contains list of row object
+    
+    2: A row object contains a list of cell objects
+    
+    
+The function **get-all-tables** returns a list of available tables inside the docx files. You can use the generic function **read-values** to get all entries of a table as a list of lists like (This is a 3X3 table containing only two entries):
+
+`(("table2" "table2" NIL) (NIL NIL NIL) (NIL NIL NIL)) `
+
+
+# Features Implemented 
+
+  * [x] Reading texts from a docx files
+ 
+  * [x] Editing the texts from a docx files by writing on the text objects
+
+  * [ ] Writing Lisp data inside a docx file
+  
+  * [ ] Tables operatons:
+    * [x] Reading Tables/Rows/Cells
+    * [ ] Editing Tables/Rows/Cells
+    * [ ] Add/Remove Tables/Rows/Cells
+ 
+  
 # How to Install
 
 1: Clone the repository to your quicklisp's local-project folder 
