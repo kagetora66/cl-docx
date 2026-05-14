@@ -36,13 +36,13 @@ The function **get-all-tables** returns a list of available tables inside the do
 
 # Features Implemented 
 
-  * [x] Reading texts from a docx files
+  * [x] Reading texts from a docx file
  
-  * [x] Editing the texts from a docx files by writing on the text objects
+  * [x] Editing the texts from a docx file by writing on the text objects
 
   * [ ] Writing Lisp data inside a docx file
   
-  * [ ] Tables operatons:
+  * [ ] Tables operations:
     * [x] Reading Tables/Rows/Cells
     * [ ] Editing Tables/Rows/Cells
     * [ ] Add/Remove Tables/Rows/Cells
