@@ -147,10 +147,17 @@
   (map 'list (lambda (table) (make-instance 'table :row-list (row-constrcutor table)))
        (dom:get-elements-by-tag-name node-instance "w:tbl")))
 
+(defun get-rows (table-instance)
+  "Returns a list of all row objects"
+  (row-list table-instance))
+
+(defun get-cells (row-instance)
+  "Get all CELL objects inside a ROW"
+  (cell-list row-instance))
 
 #+test
 (time (with-open-docx (doc #P"./test.docx")
         (setf paras (get-all-texts doc))
-        (setf doctree doc)
+        (setf treenode doc)
         (map 'vector #'read-value paras)
         ))
