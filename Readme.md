@@ -29,7 +29,7 @@ You can also get all the tables from a docx file in the same manner. Tables are 
     2: A row object contains a list of cell objects
     
     
-The function **get-all-tables** returns a list of available tables inside the docx files. You can use the generic function **read-values** to get all entries of a table as a list of lists like (This is a 3X3 table containing only two entries):
+The function **get-all-tables** returns a list of available tables inside the docx files. You can extract rows from a table and cells from a row object with functions **get-rows** and **get-cells**. You can use the generic function **read-values** to get all entries of a table as a list of lists like (This is a 3X3 table containing only two entries):
 
 `(("table2" "table2" NIL) (NIL NIL NIL) (NIL NIL NIL)) `
 
