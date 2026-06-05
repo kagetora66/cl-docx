@@ -112,9 +112,7 @@
   (with-open-file (stream (merge-pathnames "word/document.xml" doc-path) :direction :output
                                                                          :if-exists :supersede
                                                                          :element-type '(unsigned-byte 8))
-    (dom:map-document (cxml:make-octet-stream-sink stream) treenode)
-    :include-doctype t :include-xmlns-attributes t
-    :include-namespace-uri t :include-default-values t)
+    (dom:map-document (cxml:make-octet-stream-sink stream) treenode))
   (repack-directory-to-docx doc-path original-doc))
 
 
