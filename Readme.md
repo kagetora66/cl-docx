@@ -33,6 +33,17 @@ The function **get-all-tables** returns a list of available tables inside the do
 
 `(("table2" "table2" NIL) (NIL NIL NIL) (NIL NIL NIL)) `
 
+To edit the value of an existing cell, we can use the same **write-value** method. Here's an example of changing the value of one cell to a new value:
+
+
+``` common-lisp
+(with-open-docx (doc #P"./test.docx")
+  (let* ((tables (get-all-tables doc)) ;;LIST of tables in docx
+         (first-row (car (get-rows (car tables)))) ;; A LIST of CELL Objects
+         (first-cell (car (get-cells first-row))))
+    (write-value first-cell "NEWCELL")))
+```
+
 
 # Features Implemented 
 
@@ -44,7 +55,7 @@ The function **get-all-tables** returns a list of available tables inside the do
   
   * [ ] Tables operations:
     * [x] Reading Tables/Rows/Cells
-    * [ ] Editing Tables/Rows/Cells
+    * [x] Editing Tables/Rows/Cells
     * [ ] Add/Remove Tables/Rows/Cells
  
   

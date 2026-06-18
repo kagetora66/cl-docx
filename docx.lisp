@@ -87,6 +87,14 @@
   "Replaces the TEXT Object with NEW string"
   (setf (dom:node-value (dom:last-child (text-get text))) new))
 
+(defmethod write-value ((text cell) new)
+  "Replaces the text of CELL Object with NEW string"
+  (if (array-in-bounds-p (dom:get-elements-by-tag-name (cell text) "w:t") 0)
+      (setf (dom:node-value (dom:last-child
+                             (aref (dom:get-elements-by-tag-name (cell text) "w:t") 0)))
+            new)
+      nil))
+
 (defun get-xml-tree (doc-path)
   "Retruns TREENODE object from temporary DOC_PATH"
   (cxml:parse-file (merge-pathnames "word/document.xml" doc-path) (cxml-dom:make-dom-builder)))
@@ -153,9 +161,17 @@
   "Get all CELL objects inside a ROW"
   (cell-list row-instance))
 
-#+test
+
+#+test ;;for reading paragraphs
 (time (with-open-docx (doc #P"./test.docx")
         (setf paras (get-all-texts doc))
         (setf treenode doc)
         (map 'vector #'read-value paras)
         ))
+;;Changing the value of a cell
+#+test
+(with-open-docx (doc #P"./test.docx")
+  (let* ((tables (get-all-tables doc))
+         (first-row (car (get-rows (car tables))))
+         (first-cell (car (get-cells first-row))))
+    (write-value first-cell "NEWCELL")))
