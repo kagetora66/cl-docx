@@ -44,6 +44,7 @@ To edit the value of an existing cell, we can use the same **write-value** metho
     (write-value first-cell "NEWCELL")))
 ```
 
+You can also remove a row from a table using the method **remove-item**
 
 # Features Implemented 
 
@@ -56,7 +57,8 @@ To edit the value of an existing cell, we can use the same **write-value** metho
   * [ ] Tables operations:
     * [x] Reading Tables/Rows/Cells
     * [x] Editing Tables/Rows/Cells
-    * [ ] Add/Remove Tables/Rows/Cells
+    * [ ] Adding Tables/Rows/Cells
+    * [x] Removing Tables/Rows/Cells
  
   
 # How to Install

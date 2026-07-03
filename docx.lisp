@@ -24,7 +24,11 @@
   ((row-list :initarg :row-list :accessor row-list)))
 
 (defclass table-row ()
-  ((cell-list :initarg :cell-list :accessor cell-list)))
+  ((cell-list :initarg :cell-list :accessor cell-list)
+   (row-dom :initarg :row-dom
+            :accessor row-dom
+            :documentation "DOM object representing a row node in xml"))
+  (:documentation "Abstraction for a row in a table. Includes a list of CELL object and a tree node for the row"))
 
 (defclass cell ()
   ((cell :initarg :cell :accessor cell)))
@@ -138,6 +142,11 @@
   ;;NOTE we're assuming the immediate parent of w:p is always w:body. Needs more testing
   (dom:remove-child (dom:parent-node (node-reader para)) (node-reader para)))
 
+(defmethod remove-item ((row-node table-row))
+  "Removes ROW object from docx tree"
+  (dom:remove-child (dom:parent-node (row-dom row-node)) (row-dom row-node)))
+
+
 (defun wrap-cell-constructor (row-node)
   "Gets a ROW xml node and generates a list of CELL objects from it"
   (map 'list (lambda (cl) (make-instance 'cell :cell cl)) (dom:get-elements-by-tag-name row-node "w:tc")))
@@ -145,7 +154,8 @@
 (defun row-constrcutor (table-node)
   "Constructs TABLE-ROWS containing CELL objects from TABLE NODE"
   (map 'list
-            (lambda (row) (make-instance 'table-row :cell-list (wrap-cell-constructor row)))
+       (lambda (row) (make-instance 'table-row :cell-list (wrap-cell-constructor row)
+                                    :row-dom row))
             (dom:get-elements-by-tag-name table-node "w:tr")))
 
 (defun get-all-tables (node-instance)
@@ -162,16 +172,21 @@
   (cell-list row-instance))
 
 
-#+test ;;for reading paragraphs
+
+;;for reading paragraphs
+#+test
 (time (with-open-docx (doc #P"./test.docx")
         (setf paras (get-all-texts doc))
         (setf treenode doc)
         (map 'vector #'read-value paras)
         ))
+
 ;;Changing the value of a cell
+
 #+test
 (with-open-docx (doc #P"./test.docx")
   (let* ((tables (get-all-tables doc))
          (first-row (car (get-rows (car tables))))
          (first-cell (car (get-cells first-row))))
-    (write-value first-cell "NEWCELL")))
+    (write-value first-cell "NEWCELL")
+    (remove-item first-row)))
