@@ -2,7 +2,7 @@
 
 # Introduction
 
-CL-DOCX is a simple reader and writer for docx files written in Common Lisp. It currently works on operating on paragraphs but it's made in Object Oriented style in hope of future extensions. 
+CL-DOCX is a simple library for reading and manipulating data inside Docx files.
 
 The example way of using the library is as such:
 
