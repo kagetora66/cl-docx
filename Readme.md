@@ -35,12 +35,14 @@ The function **get-all-tables** returns a list of available tables inside the do
 
 To edit the value of an existing cell, we can use the same **write-value** method. Here's an example of changing the value of one cell to a new value:
 
+The function **add-row-copy** gets a _table_ object and inserts a new row at the end of the table which is the copy of the first row.
 
 ``` common-lisp
 (with-open-docx (doc #P"./test.docx")
   (let* ((tables (get-all-tables doc)) ;;LIST of tables in docx
          (first-row (car (get-rows (car tables)))) ;; A LIST of CELL Objects
          (first-cell (car (get-cells first-row))))
+    (add-row-copy (car tables)) ;;Inserts a new row at the end of the table, copying the first row
     (write-value first-cell "NEWCELL")))
 ```
 
@@ -57,7 +59,7 @@ You can also remove a row from a table using the method **remove-item**
   * [ ] Tables operations:
     * [x] Reading Tables/Rows/Cells
     * [x] Editing Tables/Rows/Cells
-    * [ ] Adding Tables/Rows/Cells
+    * [x] Adding Tables/Rows/Cells (adds copy of the first row)
     * [x] Removing Tables/Rows/Cells
  
   

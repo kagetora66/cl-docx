@@ -178,10 +178,13 @@
   "Get all CELL objects inside a ROW"
   (cell-list row-instance))
 
-;TODO adding rows to an existing table
-;(defmethod add-item ((row-node table-row))
-;  "Removes ROW object from docx tree"
-;  (dom:append-child (dom:parent-node (row-dom row-node)) (row-dom row-node)))
+(defmethod add-row-copy ((table table))
+  "Adds a row at to the table by copying the first row"
+  (let ((first-row (car (get-rows table))))
+    (dom:append-child
+     (dom:parent-node
+      (row-dom first-row))
+     (dom:clone-node (row-dom first-row) t))))
 
 ;;for reading paragraphs
 #+test
@@ -190,6 +193,7 @@
         (setf treenode doc)
         (map 'vector #'read-value paras)
         ))
+
 ;;Changing the value of a cell
 #+test
 (with-open-docx (doc #P"./test.docx")
@@ -197,5 +201,8 @@
          (first-row (car (get-rows (car tables))))
          (first-cell (cadr (get-cells first-row))))
     (write-value first-cell "TESTCELL")
+
+    (dotimes (i 10) ;;ADD TEN ROWS
+      (add-row-copy (car tables)))
     (read-value (car tables))
     ))
