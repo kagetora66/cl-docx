@@ -91,14 +91,14 @@
   "Replaces the TEXT Object with NEW string"
   (setf (dom:node-value (dom:last-child (text-get text))) new))
 
-(defmethod write-value ((text cell) new)
+(defmethod write-value ((cell-text cell) new)
   "Replaces the text of CELL Object with NEW string"
-  (if (array-in-bounds-p (dom:get-elements-by-tag-name (cell text) "w:t") 0)
+  (if (array-in-bounds-p (dom:get-elements-by-tag-name (cell cell-text) "w:t") 0)
       (setf (dom:node-value (dom:last-child
-                             (aref (dom:get-elements-by-tag-name (cell text) "w:t") 0)))
+                             (aref (dom:get-elements-by-tag-name (cell cell-text) "w:t") 0)))
             new)
       ;;IF CELL HAS NO TEXT, ADD CHILDREN ACCORDINGLY
-      (let* ((cell-node (cell text))
+      (let* ((cell-node (cell cell-text))
              (document (dom:owner-document cell-node))
              (text-node (dom:create-text-node document new))
              (w-t-element (dom:create-element document "w:t")))
@@ -188,6 +188,27 @@
       (row-dom first-row))
      (dom:clone-node (row-dom first-row) t))))
 
+(defmethod add-row-blank ((table table))
+  "Add a blank row to the TABLE object, style copied after first row"
+  (let* ((first-row (car (get-rows table)))
+         (new-row-dom (dom:clone-node (row-dom first-row) t))
+         (new-row (make-instance 'table-row
+                                 :cell-list (wrap-cell-constructor new-row-dom)
+                                 :row-dom new-row-dom)))
+    (dom:append-child
+     (dom:parent-node (row-dom first-row))
+     new-row-dom)
+
+    (setf (row-list table)
+          (append (row-list table)
+                  (list new-row)))
+
+    (map nil
+         (lambda (cell)
+           (write-value cell " "))
+         (get-cells new-row))))
+
+
 ;;for reading paragraphs
 #+test
 (time (with-open-docx (doc #P"./test.docx")
@@ -202,9 +223,10 @@
   (let* ((tables (get-all-tables doc))
          (first-row (car (get-rows (car tables))))
          (first-cell (cadr (get-cells first-row))))
+    (setf table tables)
     (write-value first-cell "TESTCELL")
 
-    (dotimes (i 10) ;;ADD TEN ROWS
-      (add-row-copy (car tables)))
+    (dotimes (i 9) ;;ADD TEN ROWS
+      (add-row-blank (car tables)))
     (read-value (car tables))
     ))
