@@ -137,14 +137,15 @@
   (repack-directory-to-docx doc-path original-doc))
 
 
-(defmacro with-open-docx ((docvar docpath) &body body)
-  "DOCVAR is an xml treenode representing the content of document.xml. Changes are saved to the DOCPATH file at the end of macro"
+(defmacro with-open-docx ((docvar docpath &optional output) &body body)
+  "DOCVAR is an xml treenode representing the content of document.xml. Changes are saved to the DOCPATH file at the end of macro.
+  The optional value for OUTPUT saves the docx to a different file if you don't want to overwrite the docx file"
   (let ((temp-path (gensym)))
     `(let* ((,temp-path (unzip ,docpath))
             (,docvar (get-xml-tree ,temp-path)))
        (unwind-protect
             (progn ,@body)
-         (repackage ,temp-path ,docvar ,docpath)))))
+         (repackage ,temp-path ,docvar (or ,output ,docpath))))))
 
 (defmethod remove-item ((para paragraph))
   "Removes PARAGRAPH object from docx tree (experimental)"
@@ -211,7 +212,7 @@
 
 ;;for reading paragraphs
 #+test
-(time (with-open-docx (doc #P"./test.docx")
+(time (with-open-docx (doc #P"./test.docx" "./test2.docx")
         (setf paras (get-all-texts doc))
         (setf treenode doc)
         (map 'vector #'read-value paras)

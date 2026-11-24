@@ -7,12 +7,12 @@ CL-DOCX is a simple library for reading and manipulating data inside Docx files.
 The example way of using the library is as such:
 
 ``` common-lisp
-(with-open-docx (doc "./test.docx")
+(with-open-docx (doc "./test.docx" "./test2.docx" ;this is optional output path)
   (setf paras (get-all-texts doc))
     (write-value (aref paras 0) "hi"))
 ```
 
-The primary way to engage with this library is the macro **with-open-docx** , The **doc** variable will contain the xml tree node of the document.xml file in the lisp structure format. 
+The primary way to engage with this library is the macro **with-open-docx** , The **doc** variable will contain the xml tree node of the document.xml file in the lisp structure format. This function takes an optional value for the ouptut direction (if you don't specify it, your original file will be overwritten)
 
 To extract all paragraphs from a document.xml file, the function **get-all-paragraphs** is used. This function returns a VECTOR of PARAGRAPH objects. On these objects, you can use the Generic Functions **read-value** to read the value of each paragraph (string) and **write-value** which gets an PARAGRAPH object, a replacement string and modifies it. The function **get-all-texts** gets every TEXT item inside the word file similarly. 
 
